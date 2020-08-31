@@ -1,0 +1,70 @@
+sass:
+  h3
+    color: #f00
+    margin: 8px auto
+  h4
+    margin: 8px auto
+    margin-left: 8px
+  ul
+    list-style: none
+    padding-inline-start: 0
+  table
+    margin-left: 16px
+
+
+form action="/" method="POST"
+  input type='text' name='stamp_name'
+  button type='submit' ダンプ保存
+
+form action="/" method="POST"
+  input type="hidden" name="_method" value="DELETE"
+  button type='submit' 全部削除
+
+form action="/"
+  . style="display: flex; height: 100px; margin-bottom: 8px;"
+    . style="border: solid 1px #ddd; padding: 0 10px; overflow-y: scroll;"
+      ul
+        - @stamps.each do |stamp|
+          li
+            input type="radio" name="stamp_a" value="#{stamp[:stamp_number]}" id="stamp_a_#{stamp[:stamp_number]}" checked=(params['stamp_a'] == stamp[:stamp_number])
+              label for="stamp_a_#{stamp[:stamp_number]}"  ="#{stamp[:stamp_name]}"
+
+    . style="border: solid 1px #ddd; margin-left: 10px; padding: 0 10px; overflow-y: scroll;"
+      ul
+        - @stamps.each do |stamp|
+          li
+            input type="radio" name="stamp_b" value="#{stamp[:stamp_number]}" id="stamp_b_#{stamp[:stamp_number]}" checked=(params['stamp_b'] == stamp[:stamp_number])
+              label for="stamp_b_#{stamp[:stamp_number]}"  ="#{stamp[:stamp_name]}"
+
+  button type='submit' diff
+
+- @results.sort.each do |table_name, differences|
+  h3 =table_name
+  - if differences.has_key?("new_records")
+    h4 新規登録されたレコード
+    table border=1 cellpadding=5 cellspacing=0
+      - differences["new_records"].each do |attr|
+        - attr.each do |column, value|
+          tr
+            td =column
+            td =value
+  - if differences.has_key?("updated_records")
+    h4 更新されたレコード
+    table border=1 cellpadding=5 cellspacing=0
+      th 列
+      th 変更前
+      th 変更後
+      - differences["updated_records"].each do |attr|
+        - attr.each do |column, value|
+          tr
+            td =column
+            td =value[:from]
+            td =value[:to]
+
+  - if differences.has_key?("deleted_ids")
+    h4 削除されたレコード
+    table border=1 cellpadding=5 cellspacing=0
+      - differences["deleted_ids"].each do |id|
+        tr
+          td ID
+          td =id

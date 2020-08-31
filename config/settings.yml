@@ -1,0 +1,14 @@
+database:
+  development:
+    adapter: mysql2
+    database: andpad_edi_development
+    host: 192.168.33.10
+    username: root
+    password: root_password
+    port: 53306
+
+ignore_tables:
+  - audits
+  - ar_internal_metadata
+
+stamp_path: stamps
