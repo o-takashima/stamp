@@ -8,5 +8,8 @@ database:
     port: 3306
 
 ignore_tables:
+  - audits
+  - ar_internal_metadata
+  - schema_migrations
 
 stamp_path: stamps
