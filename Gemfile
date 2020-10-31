@@ -5,13 +5,14 @@ source "https://rubygems.org"
 git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
 gem 'activerecord'
+gem 'config'
+gem 'dotenv'
 gem 'mysql2'
-gem 'slim'
+gem 'pry-byebug'
+gem 'pry-doc'
+gem 'sass'
 gem 'sinatra'
 gem 'sinatra-contrib'
-gem 'sass'
+gem 'slim'
 
-gem 'config'
 
-gem 'pry'
-gem 'pry-doc'

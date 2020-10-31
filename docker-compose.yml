@@ -1,0 +1,23 @@
+version: "3.7"
+services:
+  app:
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      args:
+        - USER=${CONTAINER_USER:-vagrant}
+        - USER_ID=${CONTAINER_USER_ID:-1000}
+    env_file: .env
+    volumes:
+      - .:/app
+      - bundle_data:/usr/local/bundle
+    command: sh -c "bundle && bundle exec ruby app.rb -o 0.0.0.0 -p 3333"
+    ports:
+      - "${SINATRA_PORT:-3333}:3333"
+volumes:
+  bundle_data:
+networks:
+  default:
+    external:
+      name: "${NETWORK:-bridge}"

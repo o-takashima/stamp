@@ -2,3 +2,4 @@
 
 /stamps/*
 /config/settings/*.yml
+.env

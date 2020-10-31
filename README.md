@@ -2,15 +2,57 @@
 
 アプリケーションを画面上で操作したとき、データの変化を把握するのに便利かも
 
+### 比較するDBを設定
+
+ `config/setgings.yml` または `config/settings/development.yml` を接続したいDBの情報に変更
+
+### ローカルで実行
+
+```
+$ ./start.sh
+```
+
+または
+
+```
+bundle exec ruby app.rb -o 0.0.0.0 -p 3333
+```
+
+### コンテナで実行
+
+デフォルトではvagrantで構築したVM(CentOS)を想定してます
+ユーザーやUIDが異なる場合は.envに以下を設定してください
+
+```
+CONTAINER_USER=YOUR_NAME
+CONTAINER_USER_ID=YOUR_UID
+```
+
+**コンテナ起動**
+```
+$ docker-compose build --no-cache
+$ docker-compose up -d
+```
+
+
+#### .env
+
+ポートを開放していないコンテナのネットワークに接続したい場合
+接続先のネットワークを.envに記載する
+
+```
+NETWORK=any_network
+```
+
+デフォルトポート(3333)を別のポートに変更したい場合
+
+```
+SINATRA_PORT=xxxx
+```
+
 ### 使い方
 
- `config/setgings.yml' のdatabasを、接続したいDBの情報に変更
-
-#### 実行
-
-`bundle exec ruby app.rb -o 0.0.0.0 -p 3001`
-
-`http://localhost:3001/` にアクセス
+`http://localhost:3333/` にアクセス
 
 "ダンプ保存"を押すとDBダンプを保存
 テキスト入れると名前がつけれる
@@ -19,7 +61,7 @@
 
 比較したいダンプをラジオボタンの一覧から選択
 
-"diff"を押すとなんか出る
+"比較"を押すとなんか出る
 
 ### 注意
 
