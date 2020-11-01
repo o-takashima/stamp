@@ -6,8 +6,10 @@ services:
     build:
       context: .
       args:
-        - USER=${CONTAINER_USER:-vagrant}
-        - USER_ID=${CONTAINER_USER_ID:-1000}
+        - USER=${CONTAINER_USER:-root}
+        - USER_ID=${CONTAINER_USER_ID:-0}
+        - GROUP=${CONTAINER_GROUP:-root}
+        - GROUP_ID=${CONTAINER_GROUP_ID:-0}
     env_file: .env
     volumes:
       - .:/app

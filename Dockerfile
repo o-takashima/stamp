@@ -7,19 +7,21 @@ ENV EDITOR=vim
 
 ARG USER
 ARG USER_ID
+ARG GROUP
+ARG GROUP_ID
 
 # ユーザーグループを作成
-RUN addgroup -S -g $USER_ID $USER \
-  && adduser -S -u $USER_ID $USER -G $USER \
+RUN addgroup -S -g $GROUP_ID $GROUP \
+  && adduser -S -u $USER_ID $USER -G $GROUP \
   && echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-  && echo "${USER}:${USER}" | chpasswd
+  && echo "${USER}:${GROUP}" | chpasswd
 
 # create directory.
 # 関連ディレクトリの作成＆オーナーをvagrantユーザーに変更
 # $BUNDLE_APP_CONFIG == /usr/local/bundle
 RUN mkdir -p $APP $BUNDLE_APP_CONFIG \
- && chown $USER:$USER $APP \
- && chown $USER:$USER $BUNDLE_APP_CONFIG
+ && chown $USER:$GROUP $APP \
+ && chown $USER:$GROUP $BUNDLE_APP_CONFIG
 
 # rails credentials:edit のためにvimも入れとく
 RUN apk update \
@@ -53,7 +55,7 @@ USER $USER
 
 WORKDIR $APP
 
-COPY Gemfile $APP
+COPY Gemfile* $APP/
 
 RUN bundle install
 
