@@ -1,3 +1,5 @@
 #ActiveRecord::Base.configurations = YAML.load_file('config/database.yml')
-ActiveRecord::Base.configurations = Hash[Settings.database]
-ActiveRecord::Base.establish_connection(:development)
+env = Settings.env.to_sym
+
+ActiveRecord::Base.configurations = { env => Settings.database.to_h }
+ActiveRecord::Base.establish_connection(env)

@@ -8,8 +8,8 @@ get '/' do
   @results = Overlap.compare(stamp_a, stamp_b) || []
 
   # スタンプ一覧
-  @stamps = Dir["stamps/*/*"].map do |dir|
-    %i[stamp_number stamp_name].zip(dir.split("/")[1,2]).to_h
+  @stamps = Dir[File.join(Stamp.path, '*', '*')].map do |dir|
+    %i[stamp_number stamp_name].zip(dir.split("/")[-2, 2]).to_h
   end
 
   slim :'root/index'

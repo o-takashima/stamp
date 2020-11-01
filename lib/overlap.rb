@@ -36,7 +36,7 @@ class Overlap
   def number_to_path(stamp_number)
     return unless stamp_number
 
-    Dir[File.join(Settings.stamp_path, stamp_number, '*')].first
+    Dir[File.join(Settings.stamp_path, Settings.env, stamp_number, '*')].first
   end
 
   def before
@@ -60,7 +60,7 @@ class Overlap
     # 削除されたIDリスト
     deleted_ids = before_ids - after_ids
     # 変更されたIDリスト
-    updated_ids  = (after_attrs - before_attrs).reject do |attr|
+    updated_ids = (after_attrs - before_attrs).reject do |attr|
       # 新規登録レコードは除外
       created_ids.include?(attr["id"])
     end.map{|attr| attr["id"] }

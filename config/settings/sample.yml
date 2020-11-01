@@ -1,0 +1,14 @@
+database:
+  adapter: mysql2
+  database: sample_database
+  host: localhost
+  username: root
+  password: password
+  port: 3306
+
+ignore_tables:
+  - ar_internal_metadata
+  - schema_migrations
+
+stamp_path: stamps
+log_path: /path/to/logfile

@@ -1,12 +1,16 @@
 class Stamp
   attr_accessor :stamp_number, :stamp_name
 
+  def self.path
+    File.join(Settings.stamp_path, Settings.env)
+  end
+
   def self.push(stamp_name=nil)
     new(stamp_name).run
   end
 
   def self.clear
-    Dir[File.join(Settings.stamp_path, '*')].each do |path|
+    Dir[File.join(Settings.stamp_path, Settings.env, '*')].each do |path|
       FileUtils.rm_r(path)
     end
   end
@@ -23,7 +27,7 @@ class Stamp
   private
 
   def stamp_path
-    @stamp_path  ||= File.join(Settings.stamp_path, stamp_number)
+    @stamp_path  ||= File.join(Settings.stamp_path, Settings.env, stamp_number)
   end
 
   def stamp_file

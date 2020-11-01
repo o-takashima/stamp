@@ -7,6 +7,10 @@ require 'sinatra/reloader'
 
 require 'config'
 register Config
+env = ENV.fetch('ENVIRONMENT') { 'sample' }
+Config.load_and_set_settings(Config.setting_files("./config/", env))
+Settings.add_source!({env: env})
+Settings.reload!
 
 Dir['./lib/**/*.rb'].each do |f|
   require_relative f
