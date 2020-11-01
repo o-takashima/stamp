@@ -2,49 +2,71 @@
 
 アプリケーションを画面上で操作したとき、データの変化を把握するのに便利かも
 
-### 比較するDBを設定
+## 準備
 
- `config/setgings.yml` または `config/settings/development.yml` を接続したいDBの情報に変更
+### 1. `config/settings/` に接続したい環境をのymlファイルを追加
 
-### ローカルで実行
+例(`config/settings/sample.yml`)
+```
+database:
+  adapter: mysql2
+  database: sample_development
+  host: db
+  username: root
+  password: password
+  port: 3306
 
+ignore_tables:
+  - ar_internal_metadata
+  - schema_migrations
+
+stamp_path: stamps
+log_path: /home/vagrant/apps/sample/log/development.log
+```
+
+### ローカルで起動する場合
+
+#### 2. `.env` に環境を設定
+
+```
+ENVIRONMENT=sample # config/settings/sample.ymlと同じ名前
+```
+
+#### 3. 起動
 ```
 $ ./start.sh
 ```
 
-または
+### コンテナで起動する場合
 
-```
-bundle exec ruby app.rb -o 0.0.0.0 -p 3333
-```
+#### 2. `.env` に環境名を追加
 
-### コンテナで実行
-
-デフォルトではvagrantで構築したVM(CentOS)を想定してます
-ユーザーやUIDが異なる場合は.envに以下を設定してください
+デフォルトではvagrantで構築したVM(CentOS)を想定
+実行環境に合わせて `/etc/passwd` などを参考に .envを設定する
 
 ```
 CONTAINER_USER=YOUR_NAME
 CONTAINER_USER_ID=YOUR_UID
+CONTAINER_GROUP=GROUP_NAME
+CONTAINER_GROUP_ID=YOUR_GID
+ENVIRONMENT=sample           # config/settings/sample.ymlと同じ名前
 ```
 
-**コンテナ起動**
+#### 3. ビルドと起動
+
 ```
 $ docker-compose build --no-cache
 $ docker-compose up -d
 ```
 
+#### 別のネットワークにあるDBコンテナに接続
 
-#### .env
-
-ポートを開放していないコンテナのネットワークに接続したい場合
-接続先のネットワークを.envに記載する
-
+ネットワーク名を.envに設定
 ```
 NETWORK=any_network
 ```
 
-デフォルトポート(3333)を別のポートに変更したい場合
+#### デフォルトポート(3333)を別のポートに変更
 
 ```
 SINATRA_PORT=xxxx
@@ -63,7 +85,7 @@ SINATRA_PORT=xxxx
 
 "比較"を押すとなんか出る
 
-### 注意
+# 注意
 
 「すべてのテーブル」の「すべてのレコード」をローカルに保存して突合します
 最低限のseedデータで実装を追跡したいとき向けです
