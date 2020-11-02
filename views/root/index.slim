@@ -1,16 +1,21 @@
 sass:
+  form
+    margin-left: 16px
   h3
-    color: #f00
-    margin: 8px auto
-  h4
+    color: #fff
     margin: 8px auto
     margin-left: 8px
+    border-left: 8px solid #6a5
+    background-color: #362
+    padding: 6px 8px
+  h4
+    margin: 8px auto
+    margin-left: 16px
   ul
     list-style: none
     padding-inline-start: 0
     margin: 8px auto
   table
-    margin-left: 16px
     margin-bottom: 8px
   input[type=text]
     height: 32px
@@ -27,7 +32,7 @@ sass:
     border-collapse: collapse
   .table_2
     background-color: #f9f9f9
-    border: 2px solid #bbb
+    border: 2px solid #000
     border-collapse: collapse
   td
     border: solid 1px #bbb
@@ -46,6 +51,16 @@ sass:
   .main
     margin: 0 auto
     width: 100%
+  .logs
+    font-size: 12px
+    overflow-x: auto
+
+  .logs span
+    white-space: nowrap
+
+  .table_wraper
+    margin: 0 0 8px 16px
+    overflow-x: auto
 
 .main
   .flex
@@ -58,6 +73,11 @@ sass:
       .flex
         input type="hidden" name="_method" value="DELETE"
         button.ml-8 type='submit' 全部削除
+
+    form action="/logs/entry" method="POST"
+      .flex
+        input type="hidden" name="_method" value="PUT"
+        button.ml-8 type='submit' 現在までのログを削除
 
   form action="/"
     .flex style="height: 130px;"
@@ -77,35 +97,40 @@ sass:
                 input type="radio" name="stamp_b" value="#{stamp[:stamp_number]}" id="stamp_b_#{stamp[:stamp_number]}" checked=(params['stamp_b'] == stamp[:stamp_number]) ="#{stamp[:stamp_name]}"
 
       button.ml-8 type='submit' 比較
-
   - @results.sort.each do |table_name, differences|
     h3 =table_name
     - if differences.has_key?("new_records")
       h4 新規登録
-      table class="table_1"
-        - differences["new_records"].first.keys.each do |column|
-          th =column
-        - differences["new_records"].each.with_index(1) do |attr, i|
-          tr
-          - attr.each do |column, value|
-            td class=(i%2 == 0 ? "td_2" : "td_1") =value
+      .table_wraper
+        table class="table_1"
+          - differences["new_records"].first.keys.each do |column|
+            th =column
+          - differences["new_records"].each.with_index(1) do |attr, i|
+            tr
+            - attr.each do |column, value|
+              td class=(i%2 == 0 ? "td_2" : "td_1") =value
     - if differences.has_key?("updated_records")
       h4 更新
-      - differences["updated_records"].each.with_index(1) do |attr, i|
-        table class=(i%2 == 0 ? "table_2" : "table_1")
-          th
-          th  変更前
-          th  変更後
-          - attr.each do |column, value|
-            tr
-              td class=(i%2 == 0 ? "td_2" : "td_1")  =column
-              td class=(i%2 == 0 ? "td_2" : "td_1")  =value[:from]
-              td class=(i%2 == 0 ? "td_2" : "td_1")  =value[:to]
+      .table_wraper
+        table class="table_1"
+          - differences["updated_records"].each.with_index(1) do |attr, i|
+            th
+            th 変更前
+            th 変更後
+            - attr.each do |column, value|
+              tr
+                td class=(i%2 == 0 ? "td_2" : "td_1")  =column
+                td class=(i%2 == 0 ? "td_2" : "td_1")  =value[:from]
+                td class=(i%2 == 0 ? "td_2" : "td_1")  =value[:to]
 
     - if differences.has_key?("deleted_ids")
       h4 削除
-      table.table_1
-        - differences["deleted_ids"].each do |id|
-          tr
-            td ID
-            td =id
+      .table_wraper
+        table.table_1
+          - differences["deleted_ids"].each do |id|
+            tr
+              td ID
+              td =id
+  -if @logs
+    .logs
+      == @logs.to_s

@@ -9,4 +9,3 @@ database:
 ignore_tables:
 
 stamp_path: stamps
-log_path: /path/to/logfile

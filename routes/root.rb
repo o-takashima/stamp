@@ -4,11 +4,20 @@ get '/' do
   # 比較先
   stamp_b = params[:stamp_b]
 
-  # 比較結果
-  @results = Overlap.compare(stamp_a, stamp_b) || []
+  @results = []
+  @logs    = ''
+
+  if stamp_a && stamp_b
+    # 比較結果
+    @results = Overlap.compare(stamp_a, stamp_b) || []
+
+    @logs = Overlap.compare_log(stamp_a, stamp_b) || ''
+  end
 
   # スタンプ一覧
-  @stamps = Dir[File.join(Stamp.path, '*', '*')].map do |dir|
+  @stamps = Dir[File.join(Stamp.path, '*', '*')].reject do |dir|
+    dir.start_with?(File.join(Stamp.path, 'logs'))
+  end.map do |dir|
     %i[stamp_number stamp_name].zip(dir.split("/")[-2, 2]).to_h
   end
 

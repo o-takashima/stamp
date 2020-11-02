@@ -3,19 +3,31 @@
 #
 class Overlap
 
+  # dbダンプを比較
   def self.compare(stamp_a, stamp_b)
-    new(stamp_a, stamp_b).execute
+    new(stamp_a, stamp_b).compare_db
   rescue => e
     { error: e.message }
   end
 
+  # ログを比較
+  def self.compare_log(stamp_a, stamp_b)
+    new(stamp_a, stamp_b).compare_log
+  rescue => e
+    { error: e.message }
+  end
+
+  # 比較元と比較先のパスを初期化
   def initialize(stamp_a, stamp_b)
     @stamp_a = number_to_path(stamp_a)
     @stamp_b = number_to_path(stamp_b)
+    @log_a   = number_to_log_path(stamp_a)
+    @log_b   = number_to_log_path(stamp_b)
     @differences = {}
   end
 
-  def execute
+  # dbダンプを比較
+  def compare_db
     return nil if @stamp_a.blank? || @stamp_b.blank?
 
     tables.each do |table|
@@ -23,6 +35,18 @@ class Overlap
     end
 
     @differences
+  end
+
+  # ログを比較
+  # ANSIカラーコードをHTMLに変換
+  # 改行は<br>に置換
+  def compare_log
+    return nil if @log_a.blank? || @log_b.blank?
+
+    log_a = File.read(@log_a)
+    log_b = File.read(@log_b)
+
+    Ansi::To::Html.new(log_b.sub(log_a, '')).to_html.gsub(/\n/, '<br>')
   end
 
   private
@@ -33,16 +57,26 @@ class Overlap
     end
   end
 
+  # 選択番号からパスを取得
   def number_to_path(stamp_number)
     return unless stamp_number
 
     Dir[File.join(Settings.stamp_path, Settings.env, stamp_number, '*')].first
   end
 
+  # 選択番号からログのパスを取得
+  def number_to_log_path(stamp_number)
+    return unless stamp_number
+
+    File.join(Settings.stamp_path, Settings.env, 'logs', "#{stamp_number}.log")
+  end
+
+  # 比較元ダンプHash
   def before
     @before ||= JSON.parse(File.open(@stamp_a).read)
   end
 
+  # 比較先ダンプ
   def after
     @after ||= JSON.parse(File.open(@stamp_b).read)
   end

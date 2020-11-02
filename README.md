@@ -30,6 +30,7 @@ log_path: /home/vagrant/apps/sample/log/development.log
 
 ```
 ENVIRONMENT=sample # config/settings/sample.ymlと同じ名前
+LOG_FILE=/home/username/app/log/development.log # 設定するとログファイルの比較が出ます
 ```
 
 #### 3. 起動
@@ -50,6 +51,11 @@ CONTAINER_USER_ID=YOUR_UID
 CONTAINER_GROUP=GROUP_NAME
 CONTAINER_GROUP_ID=YOUR_GID
 ENVIRONMENT=sample           # config/settings/sample.ymlと同じ名前
+
+# 接続先アプリのログボリュームを指定
+EXTERNEL_LOG_VOLUME=external_app_log
+# ログのボリュームは/tmpにマウントします
+LOG_FILE=/tmp/development.log
 ```
 
 #### 3. ビルドと起動

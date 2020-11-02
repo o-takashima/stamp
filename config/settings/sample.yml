@@ -11,4 +11,3 @@ ignore_tables:
   - schema_migrations
 
 stamp_path: stamps
-log_path: /path/to/logfile
