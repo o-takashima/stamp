@@ -1,11 +1,15 @@
 database:
   adapter: mysql2
-  database: DATABASE_NAME
-  host: LOCALHOST
-  username: USERNAME
-  password: PASSWORD
+  database: <DATABASE_NAME>
+  host: <LOCALHOST>
+  username: <USERNAME>
+  password: <PASSWORD>
   port: 3306
 
 ignore_tables:
+  - ar_internal_metadata
+  - schema_migrations
 
 stamp_path: stamps
+repository: https://github.com/<ORG>/<REPO>
+branch: <BRANCH>

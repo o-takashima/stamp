@@ -11,13 +11,13 @@ get '/' do
     # 比較結果
     @results = Overlap.compare(stamp_a, stamp_b) || []
 
-    @logs = Overlap.compare_log(stamp_a, stamp_b) || ''
+    ol = Overlap.compare_log(stamp_a, stamp_b) || ''
+    @log_rows = ol.log_rows
+    @sum_queries = ol.queries.sort
   end
 
   # スタンプ一覧
-  @stamps = Dir[File.join(Stamp.path, '*', '*')].reject do |dir|
-    dir.start_with?(File.join(Stamp.path, 'logs'))
-  end.map do |dir|
+  @stamps = Dir[File.join(Stamp.path, '*', '*')].sort.map do |dir|
     %i[stamp_number stamp_name].zip(dir.split("/")[-2, 2]).to_h
   end
 

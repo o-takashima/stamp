@@ -17,13 +17,16 @@ class Overlap
     { error: e.message }
   end
 
+  attr_reader :log_rows, :queries
   # 比較元と比較先のパスを初期化
   def initialize(stamp_a, stamp_b)
     @stamp_a = number_to_path(stamp_a)
     @stamp_b = number_to_path(stamp_b)
-    @log_a   = number_to_log_path(stamp_a)
-    @log_b   = number_to_log_path(stamp_b)
+    @stamp_number_a   = stamp_a
+    @stamp_number_b   = stamp_b
+    @log_rows = nil
     @differences = {}
+    @queries = {}
   end
 
   # dbダンプを比較
@@ -37,19 +40,84 @@ class Overlap
     @differences
   end
 
-  # ログを比較
-  # ANSIカラーコードをHTMLに変換
-  # 改行は<br>に置換
+  # ログを出力
+  # ANSIカラーコードをHTMLに変換してテーブル化
+  # カスタムしたログだとうまく表示されないかも
   def compare_log
-    return nil if @log_a.blank? || @log_b.blank?
+    log = File.read("/app/log").match(/#{@stamp_number_a}.+#{@stamp_number_b}/m).to_s
 
-    log_a = File.read(@log_a)
-    log_b = File.read(@log_b)
+    log_rows = log.split("\n").map do |line|
+      next if line.strip.blank? # 空行は除外
 
-    Ansi::To::Html.new(log_b.sub(log_a, '')).to_html.gsub(/\n/, '<br>')
+      html = Ansi::To::Html.new(line).to_html
+
+      html_to_table_row(html) # <tr>で囲う</tr>
+    end.compact # nilもあるのでcompact
+
+    @log_rows = log_rows
+
+    self
   end
 
   private
+
+  def html_to_table_row(html)
+    return query_row(html)  if html.match?("<b>.*?</b>")
+    return action_row(html) if html.match?(/Started.+?for.*$/)
+    return caller_row(html) if html.match?(/↳.+?\.rb.*/)
+
+    other_row(html)
+  end
+
+  def query_row(html)
+    _, query = html.match(/<b><span.*?>(.+?)<\/span><\/b>.*?<b><span.*?>(.+?)<\/span><\/b>/) { [$1, $2] }
+
+    @queries[query] = (@queries[query] || 0) +1
+
+    <<~HTML
+      <tr>
+        <td class='log_td1'>
+          #{html.gsub(/<\/b>[ ]*?<b>/, "</b></td><td class='log_td2'><b>")}
+        </td>
+      </tr>
+    HTML
+  end
+
+  def action_row(html)
+    <<~HTML
+      <tr>
+        <td colspan=2 class='log_td' style='background-color: #353535; color: #ffffff'>
+          #{
+             html.sub(/(Started.+?)(for.*)/) do
+              "<span style='font-weight: bold'>#{$1}</span>#{$2}"
+             end
+          }
+        </td>
+      </tr>
+    HTML
+  end
+
+  def caller_row(html)
+    path, line_num = html.match("([a-zA-Z0-9\/_].+?\.rb):([0-9]+)") { [$1, $2] }
+
+    return other_row(html) unless path
+
+    # github のパス作成
+    href = File.join(Settings.repository, 'blob', Settings.branch || 'develop', "#{path}#L#{line_num}")
+
+    <<~HTML
+      <tr>
+        <td></td>
+        <td class='log_td3'>
+          <a class='log_caller' href=#{href}>#{html}</a>
+        </td>
+      </tr>
+    HTML
+  end
+
+  def other_row(html)
+    "<tr><td colspan=2 class='log_td'>" + html + "</td></tr>"
+  end
 
   def tables
     @tables ||= ActiveRecord::Base.connection.tables.reject do |table|
@@ -62,13 +130,6 @@ class Overlap
     return unless stamp_number
 
     Dir[File.join(Settings.stamp_path, Settings.env, stamp_number, '*')].first
-  end
-
-  # 選択番号からログのパスを取得
-  def number_to_log_path(stamp_number)
-    return unless stamp_number
-
-    File.join(Settings.stamp_path, Settings.env, 'logs', "#{stamp_number}.log")
   end
 
   # 比較元ダンプHash

@@ -50,6 +50,8 @@ RUN apk update \
     yaml-dev \
     zlib-dev
 
+RUN chown $USER:$GROUP /tmp
+
 # ここまでsuper user
 USER $USER
 

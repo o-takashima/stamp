@@ -15,15 +15,10 @@ services:
       - .:/app
       - bundle_data:/usr/local/bundle
       - log_data:/tmp
-    command: sh -c "bundle && bundle exec ruby app.rb -o 0.0.0.0 -p 3333"
+    command: sh -c "/app/logger.sh && bundle && bundle exec ruby app.rb -o 0.0.0.0 -p 3333 "
     ports:
       - "${SINATRA_PORT:-3333}:3333"
 volumes:
   bundle_data:
   log_data:
-    external:
-      name: "${EXTERNEL_LOG_VOLUME:-stump_bundle_data}" # FIXME: 未指定の場合、マウントするのヤメたいけど。。。
-networks:
-  default:
-    external:
-      name: "${NETWORK:-bridge}"
+    external: true # docker volume create log_data

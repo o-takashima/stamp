@@ -12,9 +12,8 @@ require 'config'
 register Config
 
 env      = ENV.fetch('ENVIRONMENT') { 'sample' }
-log_file = ENV.fetch('LOG_FILE') { nil }
 Config.load_and_set_settings(Config.setting_files("./config/", env))
-Settings.add_source!({env: env, log_file: log_file})
+Settings.add_source!({env: env})
 Settings.reload!
 
 Dir['./lib/**/*.rb'].each do |f|

@@ -11,3 +11,5 @@ ignore_tables:
   - schema_migrations
 
 stamp_path: stamps
+repository: https://github.com/<ORG>/<REPO>
+branch: <BRANCH>

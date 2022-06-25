@@ -34,15 +34,19 @@ sass:
     background-color: #f9f9f9
     border: 2px solid #000
     border-collapse: collapse
-  td
+  .td_1
     border: solid 1px #bbb
     padding: 2px 8px 2px 8px
-    white-space: nowrap
     max-width: 300px
+    white-space: nowrap
     overflow-x: auto
-  .td_1
     background-color: #fff
   .td_2
+    border: solid 1px #bbb
+    padding: 2px 8px 2px 8px
+    max-width: 300px
+    white-space: nowrap
+    overflow-x: auto
     background-color: #f9f9f9
   th
     padding: 4px 8px
@@ -52,14 +56,64 @@ sass:
     margin: 0 auto
     width: 100%
   .logs
-    font-size: 12px
+    font-size: 18px
     overflow-x: auto
 
   .logs span
     white-space: nowrap
 
   .table_wraper
-    margin: 0 0 8px 16px
+    margin: 0 0 8px 17px
+    overflow-x: auto
+
+  .env
+    margin-left: 16px
+
+  .log_table
+    max-width: calc(100vw - 72px)
+    padding: 8px
+  .log_td
+    border: solid 1px #ddd
+    padding: 2px 8px
+    white-space: nowrap
+    max-width: calc(100vw - 72px)
+    overflow-x: auto
+  .log_td1
+    border: solid 1px #ddd
+    padding: 2px 8px
+    white-space: nowrap
+    max-width: calc(30vw - 72px)
+    overflow-x: auto
+    border-bottom: solid 1px #ddd
+    background-color: #ddd
+  .log_td2
+    border: solid 1px #ddd
+    padding: 2px 8px
+    white-space: nowrap
+    max-width: calc(70vw - 72px)
+    overflow-x: auto
+    border-bottom: solid 1px #ddd
+    background-color: #ddd
+  .log_td3
+    border: solid 1px #fff
+    padding: 2px 8px
+    white-space: nowrap
+    max-width: calc(70vw - 72px)
+    overflow-x: auto
+  .log_caller
+    font-weight: bold
+    color: #666
+  .query_td1
+    border: solid 1px #ddd
+    padding: 2px 8px
+    white-space: nowrap
+    max-width: calc(20vw - 72px)
+    overflow-x: auto
+  .query_td2
+    border: solid 1px #ddd
+    padding: 2px 8px
+    white-space: nowrap
+    max-width: calc(80vw - 72px)
     overflow-x: auto
 
 .main
@@ -74,10 +128,8 @@ sass:
         input type="hidden" name="_method" value="DELETE"
         button.ml-8 type='submit' 全部削除
 
-    form action="/logs/entry" method="POST"
-      .flex
-        input type="hidden" name="_method" value="PUT"
-        button.ml-8 type='submit' 現在までのログを削除
+    .env
+      span env: #{ENV.fetch('ENVIRONMENT')}
 
   form action="/"
     .flex style="height: 130px;"
@@ -117,7 +169,7 @@ sass:
             th
             th 変更前
             th 変更後
-            - attr.each do |column, value|
+            - attr.each.with_index(1) do |(column, value), i|
               tr
                 td class=(i%2 == 0 ? "td_2" : "td_1")  =column
                 td class=(i%2 == 0 ? "td_2" : "td_1")  =value[:from]
@@ -131,6 +183,20 @@ sass:
             tr
               td ID
               td =id
-  -if @logs
-    .logs
-      == @logs.to_s
+  -if @sum_queries
+    h3 クエリ別実行回数
+    .table_wraper
+      table class="table_1"
+        th 実行回数
+        th クエリ
+        - @sum_queries.each.with_index do |(query, count), i|
+          tr
+            td style=("background-color: #eee" if i%2 != 0) class="query_td1"  =count
+            td style=("background-color: #eee" if i%2 != 0) class="query_td2"  =query
+
+  -if @log_rows
+    h3 ログ
+    .table_wraper
+      table class="table_1"
+        - @log_rows.each do |tr|
+          == tr

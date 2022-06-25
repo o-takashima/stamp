@@ -3,3 +3,4 @@
 /stamps/*
 /config/settings/*.yml
 .env
+log
