@@ -1,5 +1,3 @@
-require 'pry'
-
 require 'active_record'
 require 'ansi-to-html'
 require 'mysql2'
@@ -11,9 +9,9 @@ Dotenv.load
 require 'config'
 register Config
 
-env      = ENV.fetch('ENVIRONMENT') { 'sample' }
+env = ENV.fetch('ENVIRONMENT') { 'sample' }
 Config.load_and_set_settings(Config.setting_files("./config/", env))
-Settings.add_source!({env: env})
+Settings.add_source!({ env: })
 Settings.reload!
 
 Dir['./lib/**/*.rb'].each do |f|

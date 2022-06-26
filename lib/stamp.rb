@@ -44,7 +44,7 @@ class Stamp
   end
 
   def log_stamp(sn=nil)
-    [sn || stamp_number, log_separator ].join()
+    [sn || stamp_number, log_separator ].join
   end
 
   def log_separator

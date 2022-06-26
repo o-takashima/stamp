@@ -73,13 +73,11 @@ sass:
     max-width: calc(100vw - 72px)
     padding: 8px
   .log_td
-    border: solid 1px #ddd
     padding: 2px 8px
     white-space: nowrap
     max-width: calc(100vw - 72px)
     overflow-x: auto
   .log_td1
-    border: solid 1px #ddd
     padding: 2px 8px
     white-space: nowrap
     max-width: calc(30vw - 72px)
@@ -87,7 +85,6 @@ sass:
     border-bottom: solid 1px #ddd
     background-color: #ddd
   .log_td2
-    border: solid 1px #ddd
     padding: 2px 8px
     white-space: nowrap
     max-width: calc(70vw - 72px)
@@ -95,7 +92,6 @@ sass:
     border-bottom: solid 1px #ddd
     background-color: #ddd
   .log_td3
-    border: solid 1px #fff
     padding: 2px 8px
     white-space: nowrap
     max-width: calc(70vw - 72px)
@@ -104,17 +100,17 @@ sass:
     font-weight: bold
     color: #666
   .query_td1
-    border: solid 1px #ddd
     padding: 2px 8px
     white-space: nowrap
     max-width: calc(20vw - 72px)
     overflow-x: auto
   .query_td2
-    border: solid 1px #ddd
     padding: 2px 8px
     white-space: nowrap
     max-width: calc(80vw - 72px)
     overflow-x: auto
+  .toggle
+    display: none
 
 .main
   .flex
@@ -184,9 +180,11 @@ sass:
               td ID
               td =id
   -if @sum_queries
-    h3 クエリ別実行回数
+    h3 onClick="onToggle('toggle_sum_queries')" クエリ実行回数
+    .toggle
+      input class="toggle" type="checkbox" checked=true onChange="toggle('sum_queries')" id="toggle_sum_queries"
     .table_wraper
-      table class="table_1"
+      table id="sum_queries" class="table_1"
         th 実行回数
         th クエリ
         - @sum_queries.each.with_index do |(query, count), i|
@@ -195,8 +193,24 @@ sass:
             td style=("background-color: #eee" if i%2 != 0) class="query_td2"  =query
 
   -if @log_rows
-    h3 ログ
+    h3 onClick="onToggle('toggle_logs')" ログ
+    .toggle
+      input class="toggle" type="checkbox" checked=true onChange="toggle('logs')" id="toggle_logs"
     .table_wraper
-      table class="table_1"
+      table id="logs" class="table_1"
         - @log_rows.each do |tr|
           == tr
+
+javascript:
+  function onToggle(targetID) {
+    var checkBox = document.querySelector(`#${targetID}`)
+    checkBox.checked = !checkBox.checked
+    checkBox.dispatchEvent(new Event("change"))
+  }
+  function toggle(targetID) {
+    var target = document.querySelector(`#${targetID}`)
+    if (event.target.checked)
+      target.style.display = ''
+    else
+      target.style.display = 'none'
+  }

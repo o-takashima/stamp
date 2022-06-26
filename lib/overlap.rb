@@ -109,7 +109,7 @@ class Overlap
       <tr>
         <td></td>
         <td class='log_td3'>
-          <a class='log_caller' href=#{href}>#{html}</a>
+          <a class='log_caller' href=#{href} target="_blank">#{html}</a>
         </td>
       </tr>
     HTML
