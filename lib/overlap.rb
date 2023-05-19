@@ -98,7 +98,7 @@ class Overlap
   end
 
   def caller_row(html)
-    path, line_num = html.match("([a-zA-Z0-9\/_].+?\.rb):([0-9]+)") { [$1, $2] }
+    path, line_num = html.match("([a-zA-Z0-9\/_]+?\.rb):([0-9]+)") { [$1, $2] }
 
     return other_row(html) unless path
 

@@ -76,7 +76,7 @@ class Stamp
           SELECT
             *
           FROM
-            #{table}
+            `#{table}`
           SQL
         ).to_a
     end.to_json
